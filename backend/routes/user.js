@@ -22,19 +22,19 @@ router.post("/signup",async(req,res)=>{
     const validate=userSchema.safeParse({username:req.body.username,firstname:req.body.firstname,lastname:req.body.lastname});
     console.log(validate.error)
     if (!validate.success) {
-        return res.json({
+        return res.status(411).json({
             message: validate.error.issues[0].message
-        }).status(411)
+        })
     }
     const validatedPassword = passwordSchema.safeParse(req.body.password);
     if(!validatedPassword.success){
-        return res.json({message: validatedPassword.error.issues[0].message})
+        return res.status(409).json({message: validatedPassword.error.issues[0].message})
     }
     const existingUser = await User.findOne({
         username: req.body.username
     })
     if (existingUser) {
-        return res.status(411).json({
+        return res.status(409).json({
             message: "Email already taken"
         })
     }
