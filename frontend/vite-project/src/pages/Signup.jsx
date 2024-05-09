@@ -3,6 +3,7 @@ import Input from '../components/Input'
 import { BottomWarning } from '../components/BottomWarning'
 import Button from '../components/Button'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 
@@ -11,6 +12,8 @@ export default function Signup() {
     const [lastname, setLastname] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [err,setErr] = useState(null);
+    const navigate= useNavigate();
 
     return (
         <div className='bg-[#000b1db3]' style={{
@@ -38,12 +41,16 @@ export default function Signup() {
                             }
                         }).then((response)=>{
                             localStorage.setItem("token", response.data.token)
-                            console.log(response.status, response.headers, response.data)
+                            //console.log(response.status, response.headers, response.data)
+                            navigate("/dashboard",{state:{User:response.data.firstname, Balance:response.data.balance}})
                         }).catch((error)=>{
-                            console.log(error.response.data)
-                            console.log(error.toJSON().message);
+                            //console.log(error)
+                            setErr(error.response.data.message)
+                            console.log(error.response.data.message)
+                            //console.log(error.toJSON().message);
                         })
                     }} label={"Sign up"}></Button>
+                    {err? <div className='text-wrap max-w-[250px]'>{err}</div>:""}
                     <BottomWarning label={"Already have an account?"} buttonText={"Sign in"} to={"/signin"}></BottomWarning>
                 </form>
             </div>
