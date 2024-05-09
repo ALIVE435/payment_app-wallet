@@ -20,7 +20,6 @@ const passwordSchema = zod.string()
 
 router.post("/signup",async(req,res)=>{
     const validate=userSchema.safeParse({username:req.body.username,firstname:req.body.firstname,lastname:req.body.lastname});
-    console.log(validate.error)
     if (!validate.success) {
         return res.status(411).json({
             message: validate.error.issues[0].message
@@ -45,19 +44,20 @@ router.post("/signup",async(req,res)=>{
         lastName: req.body.lastname,
     })
     const userId = user._id;
-
     await Account.create({
         userId,
         balance: 1 + Math.random() * 10000
     })
-    
+    const account= await Account.findOne({userId})
     const token = jwt.sign({
         userId
     }, JWT_SECRET);
 
     res.status(200).json({
         message: "User created successfully",
-        token: token
+        token,
+        firstname:user.firstName,
+        balance:account.balance
     })
 })
 
@@ -66,9 +66,9 @@ const signinBody = zod.object({
 	password: zod.string()
 })
 router.post('/signin',async (req,res)=>{
-    console.log(req.body)
+    //console.log(req.body)
     const validate = signinBody.safeParse({username:req.body.username,password:req.body.password})
-    console.log(validate.error)
+    // console.log(validate)
     if (!validate.success) {
         return res.json({
             message: "Incorrect inputs"
@@ -79,13 +79,22 @@ router.post('/signin',async (req,res)=>{
         username: req.body.username,
         password: req.body.password
     });
+    const account= await Account.findOne({
+        userId:user._id
+    })
     if (user) {
         const token = jwt.sign({
             userId: user._id
         }, JWT_SECRET);
-  
+        console.log(typeof token)
+        console.log(token)
+        const decoded = jwt.verify(token, JWT_SECRET);
+        console.log(decoded)
+        //console.log(token)
         res.status(200).json({
-            token: token
+            token: token,
+            firstname:user.firstName,
+            balance:account.balance
         })
         return;
     }

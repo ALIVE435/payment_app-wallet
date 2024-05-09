@@ -1,6 +1,7 @@
 const mongoose=require("mongoose")
-mongoose.connect("mongodb+srv://ALIVE435:2002@cluster0.tgf93sl.mongodb.net/payment_app")
-.then(()=>{console.log("connected")})
+mongoose.connect("mongodb+srv://ALIVE435:43500000@cluster0.tgf93sl.mongodb.net/payment_app")
+.then(()=>{console.log("database connected")})
+
 
 const userSchema=new mongoose.Schema({
     username:{

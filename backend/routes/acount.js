@@ -1,5 +1,6 @@
 // backend/routes/account.js
 const express = require('express');
+const mongoose=require("mongoose")
 const authMiddleware=require('../middleware')
 const {Account}=require('../db')
 
@@ -15,8 +16,8 @@ router.get('/balance',authMiddleware,async(req,res)=>{
     })
 })
 router.post("/transfer", authMiddleware, async (req, res) => {
+    console.log(req.body)
     const session = await mongoose.startSession();
-
     session.startTransaction();
     const { amount, to } = req.body;
 
